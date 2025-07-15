@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <title>REGISTRATE</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+<body>
+  <div class="registro-container">
+    <h2>REGISTRO</h2>
+    <form onsubmit="return registrar(event)">
+      <input type="text" id="username" placeholder="Usuario" required>
+      <input type="text" id="telefono" placeholder="Teléfono" required>
+      <input type="password" id="contraseña" placeholder="Contraseña" required>
+      <input type="password" id="confirmar-contraseña" placeholder="Confirmar Contraseña" required>
+      <button type="submit">Registrar</button>
+    </form>
+    <a href="login.html">¿Ya tienes cuenta? Inicia sesión</a>
+    <div class="error-message" id="error-message"></div>
+  </div>
+  
+  <script>
+    function registrar(event) {
+      event.preventDefault();
+      
+      const nombre = document.getElementById("username").value;
+      const telefono = document.getElementById("telefono").value;
+      const contraseña = document.getElementById("contraseña").value;
+      const confirmarContraseña = document.getElementById("confirmar-contraseña").value;
+
+      if (contraseña !== confirmarContraseña) {
+        document.getElementById("error-message").innerText = "Las contraseñas no coinciden.";
+        return;
+      }
+
+      // Hacer la solicitud al servidor para registrar el usuario
+      fetch("http://localhost:3000/api/registro", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          nombre: nombre,
+          telefono: telefono,
+          contraseña: contraseña
+        })
+      })
+      .then(respuesta => respuesta.json())
+      .then(data => {
+        if (data.success) {
+          window.location.href = "login.html"; // Redirigir a login después del registro exitoso
+        } else {
+          document.getElementById("error-message").innerText = data.message || "Error al registrar el usuario.";
+        }
+      })
+      .catch(error => {
+        console.error("Error en la solicitud:", error);
+        document.getElementById("error-message").innerText = "Hubo un error al registrar el usuario.";
+      });
+    }
+  </script>
+</body>
+</html>

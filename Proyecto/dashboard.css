@@ -1,0 +1,86 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f5f6fa;
+  margin: 0;
+  padding: 0;
+}
+
+#menuNavegacion {
+  background-color: #2f3640;
+  padding: 15px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+#menuNavegacion button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#menuNavegacion button:hover {
+  background-color: #007bff;
+}
+
+.seccion {
+  margin: 20px auto;
+  max-width: 600px;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  display: none; /* Ocultas todas las secciones por defecto */
+}
+
+.seccion h2 {
+  text-align: center;
+  color: #2f3640;
+  margin-bottom: 20px;
+}
+
+form input, form button {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px 15px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+form button {
+  background-color: #0097e6;
+  color: white;
+  border: none;
+  transition: background-color 0.3s;
+}
+
+form button:hover {
+  background-color: #00a8ff;
+}
+
+#contenedorReporte ul {
+  list-style: none;
+  padding: 0;
+}
+
+#contenedorReporte li {
+  background: #dcdde1;
+  margin: 8px 0;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+#contenedorReporte h3 {
+  text-align: center;
+  color: #353b48;
+  margin-bottom: 15px;
+}

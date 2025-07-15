@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+
+  <!-- BOTONES DE NAVEGACIÓN -->
+  <div id="menuNavegacion">
+    <button onclick="mostrarSeccion('seccionIngresarPedido')">Ingresar Pedido</button>
+    <button onclick="mostrarSeccion('seccionRegistrarSalida')">Registrar Salida</button>
+    <button onclick="mostrarSeccion('seccionReporte')">Reporte</button>
+    <button onclick="mostrarSeccion('seccionUsuario')">Mi Usuario</button>
+    <button onclick="cerrarSesion()">Cerrar Sesión</button>
+  </div>
+
+  <!-- SECCIÓN INGRESAR PEDIDO -->
+  <div id="seccionIngresarPedido" class="seccion">
+    <h2>Ingresar Pedido</h2>
+    <form onsubmit="registrarPedido(event)">
+      <input type="text" id="cliente" placeholder="Cliente" required><br>
+      <input type="number" id="cantidad" placeholder="Cantidad en KG" required><br>
+      <input type="date" id="fechaPedido" required><br>
+      <button type="submit">Enviar Pedido</button>
+    </form>
+  </div>
+
+  <!-- SECCIÓN REGISTRAR SALIDA -->
+  <div id="seccionRegistrarSalida" class="seccion">
+    <h2>Registrar Salida</h2>
+    <form onsubmit="registrarSalida(event)">
+      <input type="text" id="destino" placeholder="Destino" required><br>
+      <input type="number" id="cantidadSalida" placeholder="Cantidad de Salida en KG" required><br>
+      <input type="date" id="fechaSalida" required><br>
+      <button type="submit">Registrar Salida</button>
+    </form>
+  </div>
+
+  <!-- SECCIÓN REPORTE -->
+  <div id="seccionReporte" class="seccion">
+    <h2>Reporte Diario</h2>
+    <button onclick="generarReporte()">Generar Reporte</button>
+    <button onclick="imprimirReporte()">Imprimir Reporte</button>
+    <div id="contenedorReporte" style="margin-top: 20px;"></div>
+  </div>
+
+  <!-- SECCIÓN MI USUARIO -->
+  <div id="seccionUsuario" class="seccion">
+    <h2>Mi Usuario</h2>
+    <form onsubmit="cambiarContraseña(event)">
+      <label for="nombreUsuario">Nombre de usuario:</label>
+      <input type="text" id="nombreUsuario" required><br>
+      <label for="contraseñaActual">Contraseña actual:</label>
+      <input type="password" id="contraseñaActual" required><br>
+      <label for="nuevaContraseña">Nueva contraseña:</label>
+      <input type="password" id="nuevaContraseña" required><br>
+      <button type="submit">Cambiar Contraseña</button>
+    </form>
+    <p id="mensajeContraseña"></p>
+  </div>
+
+  <!-- SCRIPT -->
+  <script>
+    function mostrarSeccion(seccion) {
+      const secciones = document.querySelectorAll('.seccion');
+      secciones.forEach(sec => sec.style.display = 'none');
+      document.getElementById(seccion).style.display = 'block';
+    }
+
+    function registrarPedido(evento) {
+      evento.preventDefault();
+      const cliente = document.getElementById("cliente").value.trim();
+      const cantidad = parseInt(document.getElementById("cantidad").value);
+      const fecha_pedido = document.getElementById("fechaPedido").value;
+
+      if (!cliente || isNaN(cantidad) || !fecha_pedido) {
+        return alert("Todos los campos son obligatorios.");
+      }
+
+      const pedidos = { cliente, cantidad, fecha_pedido };
+
+      fetch("http://localhost:3000/api/pedidos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(pedidos)
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.success ? "Pedido ingresado con éxito" : "Error: " + (data.message || ''));
+      })
+      .catch(err => {
+        console.error('Error al registrar pedido:', err);
+        alert("Error al registrar pedido");
+      });
+    }
+
+    function registrarSalida(evento) {
+      evento.preventDefault();
+      const destino = document.getElementById("destino").value.trim();
+      const cantidad = parseInt(document.getElementById("cantidadSalida").value);
+      const fecha_salida = document.getElementById("fechaSalida").value;
+
+      if (!destino || isNaN(cantidad) || !fecha_salida) {
+        return alert("Todos los campos son obligatorios.");
+      }
+
+      const salidas = { destino, cantidad, fecha_salida };
+
+      fetch("http://localhost:3000/api/salidas", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(salidas)
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.success ? "Salida registrada correctamente" : "Error: " + (data.message || ''));
+      })
+      .catch(err => {
+        console.error('Error al registrar salida:', err);
+        alert("Error al registrar salida");
+      });
+    }
+
+    function generarReporte() {
+      fetch('http://localhost:3000/api/reporte')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          const reporte = data.reporte;
+          const contenedor = document.getElementById('contenedorReporte');
+          contenedor.innerHTML = `
+            <h3>Reporte del Día</h3>
+            <table border="1" cellpadding="5" cellspacing="0" style="width: 100%;">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Pedido</th>
+                  <th>Salida</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${reporte.map(item => `
+                  <tr>
+                    <td>${item.fecha}</td>
+                    <td>${item.pedido}</td>
+                    <td>${item.salida}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          `;
+        } else {
+          alert('Error al generar el reporte');
+        }
+      })
+      .catch(error => {
+        console.error('Error al generar reporte:', error);
+        alert('Hubo un problema al generar el reporte');
+      });
+    }
+
+    function imprimirReporte() {
+      const contenido = document.getElementById('contenedorReporte').innerHTML;
+      const ventana = window.open('', '', 'height=800,width=800');
+      ventana.document.write('<html><head><title>Reporte Diario</title></head><body>');
+      ventana.document.write(contenido);
+      ventana.document.write('</body></html>');
+      ventana.document.close();
+      ventana.print();
+    }
+
+    function cerrarSesion() {
+      window.location.href = 'login.html';
+    }
+
+    function cambiarContraseña(event) {
+      event.preventDefault();
+      const nombre = document.getElementById('nombreUsuario').value;
+      const contraseñaActual = document.getElementById('contraseñaActual').value;
+      const nuevaContraseña = document.getElementById('nuevaContraseña').value;
+
+      const datos = { nombre, contraseñaActual, nuevaContraseña };
+
+      fetch('http://localhost:3000/api/cambiar-contraseña', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(datos)
+      })
+      .then(res => res.json())
+      .then(data => {
+        const mensaje = document.getElementById('mensajeContraseña');
+        mensaje.textContent = data.success ? 'Contraseña cambiada con éxito' : 'Error: ' + (data.message || '');
+        mensaje.style.color = data.success ? 'green' : 'red';
+      })
+      .catch(error => {
+        console.error('Error al cambiar la contraseña:', error);
+        const mensaje = document.getElementById('mensajeContraseña');
+        mensaje.textContent = 'Hubo un problema al cambiar la contraseña';
+        mensaje.style.color = 'red';
+      });
+    }
+  </script>
+
+</body>
+</html>
