@@ -113,26 +113,27 @@ app.post('/api/salidas', (req, res) => {
 
 // Ruta para generar el reporte diario
 app.get('/api/reporte', (req, res) => {
-  const today = new Date().toISOString().split('T')[0];
-  console.log('Generando reporte para:', today);
+  const today = new Date();
+  const startOfDay = new Date(today.setHours(0, 0, 0, 0));
+  const endOfDay = new Date(today.setHours(23, 59, 59, 999));
 
   const queryPedidos = `
     SELECT cliente AS nombre, cantidad, fecha_pedido AS fecha 
     FROM pedidos 
-    WHERE fecha_pedido = ?`;
+    WHERE fecha_pedido BETWEEN ? AND ?`;
 
   const querySalidas = `
     SELECT destino AS nombre, cantidad AS cantidad, fecha_salida AS fecha 
     FROM salidas 
-    WHERE fecha_salida = ?`;
+    WHERE fecha_salida BETWEEN ? AND ?`;
 
-  conexion.query(queryPedidos, [today], (err, pedidos) => {
+  conexion.query(queryPedidos, [startOfDay, endOfDay], (err, pedidos) => {
     if (err) {
       console.error('Error al consultar pedidos:', err);
       return res.status(500).json({ success: false, message: 'Error al generar el reporte' });
     }
 
-    conexion.query(querySalidas, [today], (err, salidas) => {
+    conexion.query(querySalidas, [startOfDay, endOfDay], (err, salidas) => {
       if (err) {
         console.error('Error al consultar salidas:', err);
         return res.status(500).json({ success: false, message: 'Error al generar el reporte' });
@@ -162,6 +163,8 @@ app.get('/api/reporte', (req, res) => {
     });
   });
 });
+
+
 
 // Cambiar contraseña
 app.post('/api/cambiar-contrasena', (req, res) => {
@@ -197,7 +200,7 @@ app.use(express.static(path.join(__dirname, 'Proyecto')));
 
 // Ruta principal
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'Proyecto', 'Registro.html'));
+  res.sendFile(path.join(__dirname, 'Proyecto', 'login.html'));
 });
 
 // Iniciar servidor
