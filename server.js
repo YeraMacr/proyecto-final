@@ -113,27 +113,31 @@ app.post('/api/salidas', (req, res) => {
 
 // Ruta para generar el reporte diario
 app.get('/api/reporte', (req, res) => {
-  const today = new Date();
-  const startOfDay = new Date(today.setHours(0, 0, 0, 0));
-  const endOfDay = new Date(today.setHours(23, 59, 59, 999));
+  const fecha = req.query.fecha;
+
+  if (!fecha) {
+    return res.status(400).json({ success: false, message: 'Fecha requerida' });
+  }
+
+  console.log('Generando reporte para:', fecha);
 
   const queryPedidos = `
     SELECT cliente AS nombre, cantidad, fecha_pedido AS fecha 
     FROM pedidos 
-    WHERE fecha_pedido BETWEEN ? AND ?`;
+    WHERE fecha_pedido = ?`;
 
   const querySalidas = `
     SELECT destino AS nombre, cantidad AS cantidad, fecha_salida AS fecha 
     FROM salidas 
-    WHERE fecha_salida BETWEEN ? AND ?`;
+    WHERE fecha_salida = ?`;
 
-  conexion.query(queryPedidos, [startOfDay, endOfDay], (err, pedidos) => {
+  conexion.query(queryPedidos, [fecha], (err, pedidos) => {
     if (err) {
       console.error('Error al consultar pedidos:', err);
       return res.status(500).json({ success: false, message: 'Error al generar el reporte' });
     }
 
-    conexion.query(querySalidas, [startOfDay, endOfDay], (err, salidas) => {
+    conexion.query(querySalidas, [fecha], (err, salidas) => {
       if (err) {
         console.error('Error al consultar salidas:', err);
         return res.status(500).json({ success: false, message: 'Error al generar el reporte' });
@@ -163,6 +167,7 @@ app.get('/api/reporte', (req, res) => {
     });
   });
 });
+
 
 
 

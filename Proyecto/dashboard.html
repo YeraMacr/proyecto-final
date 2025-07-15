@@ -1,27 +1,25 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Dashboard - AvocAPP</title>
-  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="dashboard.css" />
 </head>
 <body>
-
   <!-- Video de fondo opcional -->
   <div class="video-wrapper">
     <video autoplay muted loop class="video-background">
-      <source src="assets/fondo.mp4" type="video/mp4">
+      <source src="assets/fondo.mp4" type="video/mp4" />
     </video>
     <div class="video-overlay"></div>
   </div>
 
-  <!-- Mascota flotante -->
   <div class="background-overlay"></div>
 
   <div class="app-container">
     <header class="header">
       <div class="logo">
-        <img src="assets/logo.png" alt="Logo AvocAPP">
+        <img src="assets/logo.png" alt="Logo AvocAPP" />
         <h1>AvocAPP</h1>
       </div>
       <button class="logout-button" onclick="cerrarSesion()">Cerrar sesión</button>
@@ -40,63 +38,68 @@
       <form onsubmit="registrarPedido(event)">
         <div class="form-group">
           <label for="cliente">Cliente</label>
-          <input type="text" id="cliente" placeholder="Cliente" required>
+          <input type="text" id="cliente" placeholder="Cliente" required />
         </div>
         <div class="form-group">
           <label for="cantidad">Cantidad en KG</label>
-          <input type="number" id="cantidad" placeholder="Cantidad en KG" required>
+          <input type="number" id="cantidad" placeholder="Cantidad en KG" required />
         </div>
         <div class="form-group">
           <label for="fechaPedido">Fecha del Pedido</label>
-          <input type="date" id="fechaPedido" required>
+          <input type="date" id="fechaPedido" required />
         </div>
         <button type="submit" class="btn btn-primary">Enviar Pedido</button>
       </form>
     </div>
 
     <!-- SECCIÓN REGISTRAR SALIDA -->
-    <div id="seccionRegistrarSalida" class="seccion" style="display: none;">
+    <div id="seccionRegistrarSalida" class="seccion" style="display: none">
       <h3>Registrar Salida</h3>
       <form onsubmit="registrarSalida(event)">
         <div class="form-group">
           <label for="destino">Destino</label>
-          <input type="text" id="destino" placeholder="Destino" required>
+          <input type="text" id="destino" placeholder="Destino" required />
         </div>
         <div class="form-group">
           <label for="cantidadSalida">Cantidad de Salida en KG</label>
-          <input type="number" id="cantidadSalida" placeholder="Cantidad de Salida" required>
+          <input type="number" id="cantidadSalida" placeholder="Cantidad de Salida" required />
         </div>
         <div class="form-group">
           <label for="fechaSalida">Fecha de Salida</label>
-          <input type="date" id="fechaSalida" required>
+          <input type="date" id="fechaSalida" required />
         </div>
         <button type="submit" class="btn btn-primary">Registrar Salida</button>
       </form>
     </div>
 
     <!-- SECCIÓN REPORTE -->
-    <div id="seccionReporte" class="seccion" style="display: none;">
+    <div id="seccionReporte" class="seccion" style="display: none">
       <h3>Reporte Diario</h3>
-      <button onclick="generarReporte()" class="btn btn-secondary">Generar Reporte</button>
-      <button onclick="imprimirReporte()" class="btn btn-primary">Imprimir Reporte</button>
-      <div id="contenedorReporte" class="chart-container" style="margin-top: 20px;"></div>
+      <div class="reporte-filtros">
+        <input type="date" id="fechaReporte" />
+        <button class="btn" onclick="generarReporte()">Generar Reporte</button>
+        <button class="btn btn-secondary" onclick="imprimirReporte()">Imprimir Reporte</button>
+      </div>
+
+      <!-- 📌 Contenedor que antes faltaba -->
+      <div id="contenedorReporte" class="contenedor-reporte"></div>
     </div>
 
     <!-- SECCIÓN MI USUARIO -->
-    <div id="seccionUsuario" class="seccion" style="display: none;">
+    <div id="seccionUsuario" class="seccion" style="display: none">
       <h3>Mi Usuario</h3>
       <form onsubmit="cambiarContraseña(event)">
         <div class="form-group">
           <label for="nombreUsuario">Nombre de usuario</label>
-          <input type="text" id="nombreUsuario" required>
+          <input type="text" id="nombreUsuario" required />
         </div>
         <div class="form-group">
           <label for="contraseñaActual">Contraseña actual</label>
-          <input type="password" id="contraseñaActual" required>
+          <input type="password" id="contraseñaActual" required />
         </div>
         <div class="form-group">
           <label for="nuevaContraseña">Nueva contraseña</label>
-          <input type="password" id="nuevaContraseña" required>
+          <input type="password" id="nuevaContraseña" required />
         </div>
         <button type="submit" class="btn btn-primary">Cambiar Contraseña</button>
         <p id="mensajeContraseña" class="info-text"></p>
@@ -104,111 +107,7 @@
     </div>
   </div>
 
-  <!-- SCRIPTS -->
-  <script>
-    function mostrarSeccion(id) {
-      document.querySelectorAll('.seccion').forEach(sec => sec.style.display = 'none');
-      document.getElementById(id).style.display = 'block';
-    }
-
-    function registrarPedido(e) {
-      e.preventDefault();
-      const cliente = document.getElementById("cliente").value.trim();
-      const cantidad = parseInt(document.getElementById("cantidad").value);
-      const fecha_pedido = document.getElementById("fechaPedido").value;
-
-      if (!cliente || isNaN(cantidad) || !fecha_pedido) return alert("Todos los campos son obligatorios.");
-
-      fetch("http://localhost:3000/api/pedidos", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cliente, cantidad, fecha_pedido })
-      })
-      .then(res => res.json())
-      .then(data => alert(data.success ? "Pedido ingresado con éxito" : "Error: " + (data.message || '')))
-      .catch(err => alert("Error al registrar pedido"));
-    }
-
-    function registrarSalida(e) {
-      e.preventDefault();
-      const destino = document.getElementById("destino").value.trim();
-      const cantidad = parseInt(document.getElementById("cantidadSalida").value);
-      const fecha_salida = document.getElementById("fechaSalida").value;
-
-      if (!destino || isNaN(cantidad) || !fecha_salida) return alert("Todos los campos son obligatorios.");
-
-      fetch("http://localhost:3000/api/salidas", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ destino, cantidad, fecha_salida })
-      })
-      .then(res => res.json())
-      .then(data => alert(data.success ? "Salida registrada correctamente" : "Error: " + (data.message || '')))
-      .catch(err => alert("Error al registrar salida"));
-    }
-
-    function generarReporte() {
-      fetch('http://localhost:3000/api/reporte')
-        .then(res => res.json())
-        .then(data => {
-          if (!data.success) return alert('Error al generar el reporte');
-
-          const tabla = data.reporte.map(item => `
-            <tr>
-              <td>${item.fecha}</td>
-              <td>${item.pedido}</td>
-              <td>${item.salida}</td>
-            </tr>`).join('');
-
-          document.getElementById('contenedorReporte').innerHTML = `
-            <h4 class="chart-title">Reporte del Día</h4>
-            <table border="1" cellpadding="5" cellspacing="0" style="width: 100%; background: white; border-radius: 10px;">
-              <thead><tr><th>Fecha</th><th>Pedido</th><th>Salida</th></tr></thead>
-              <tbody>${tabla}</tbody>
-            </table>`;
-        })
-        .catch(() => alert('Hubo un problema al generar el reporte'));
-    }
-
-    function imprimirReporte() {
-      const contenido = document.getElementById('contenedorReporte').innerHTML;
-      const ventana = window.open('', '', 'height=800,width=800');
-      ventana.document.write('<html><head><title>Reporte Diario</title></head><body>');
-      ventana.document.write(contenido);
-      ventana.document.write('</body></html>');
-      ventana.document.close();
-      ventana.print();
-    }
-
-    function cerrarSesion() {
-      window.location.href = 'login.html';
-    }
-
-    function cambiarContraseña(event) {
-      event.preventDefault();
-      const datos = {
-        nombre: document.getElementById('nombreUsuario').value,
-        contraseñaActual: document.getElementById('contraseñaActual').value,
-        nuevaContraseña: document.getElementById('nuevaContraseña').value,
-      };
-
-      fetch('http://localhost:3000/api/cambiar-contrasena', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(datos)
-      })
-      .then(res => res.json())
-      .then(data => {
-        const mensaje = document.getElementById('mensajeContraseña');
-        mensaje.textContent = data.success ? 'Contraseña cambiada con éxito' : 'Error: ' + (data.message || '');
-        mensaje.style.color = data.success ? 'green' : 'red';
-      })
-      .catch(() => {
-        const mensaje = document.getElementById('mensajeContraseña');
-        mensaje.textContent = 'Hubo un problema al cambiar la contraseña';
-        mensaje.style.color = 'red';
-      });
-    }
-  </script>
+  <!-- SCRIPT PRINCIPAL -->
+  <script src="/js/dashboard.js"></script>
 </body>
 </html>
