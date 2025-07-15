@@ -1,3 +1,4 @@
+const API_URL = 'https://proyecto-final-production-9ab6.up.railway.app';
 function registrar(evento) {
     evento.preventDefault();  // Esto previene que el formulario se envíe de manera tradicional y recargue la página
 
@@ -21,7 +22,7 @@ function registrar(evento) {
     };
 
     // Enviar los datos al servidor utilizando Fetch API
-    fetch("http://localhost:3000/api/registro", {
+    fetch(`${API_URL}/api/registro`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

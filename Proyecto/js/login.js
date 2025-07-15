@@ -1,3 +1,4 @@
+const API_URL = 'https://proyecto-final-production-9ab6.up.railway.app';
 function iniciarSesion(evento) {
     evento.preventDefault();
 
@@ -6,7 +7,7 @@ function iniciarSesion(evento) {
 
     const datosLogin = { nombre, contraseña };
 
-    fetch("http://localhost:3000/api/login", {
+    fetch(`${API_URL}`/api/login, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

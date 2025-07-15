@@ -1,3 +1,6 @@
+const API_URL = 'https://proyecto-final-production-9ab6.up.railway.app';
+
+
 function mostrarSeccion(id) {
   document.querySelectorAll('.seccion').forEach(sec => sec.style.display = 'none');
   const seccion = document.getElementById(id);
@@ -15,7 +18,7 @@ function registrarPedido(e) {
     return;
   }
 
-  fetch("http://localhost:3000/api/pedidos", {
+  fetch(`${API_URL}/api/pedidos`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ cliente, cantidad, fecha_pedido })
@@ -36,7 +39,7 @@ function registrarSalida(e) {
     return;
   }
 
-  fetch("http://localhost:3000/api/salidas", {
+  fetch(`${API_URL}/api/salidas`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ destino, cantidad, fecha_salida })
@@ -53,7 +56,7 @@ function generarReporte() {
     return;
   }
 
-  fetch(`http://localhost:3000/api/reporte?fecha=${fechaInput}`)
+  fetch(`${API_URL}/api/reporte?fecha=${fechaInput}`)
     .then(res => {
       if (!res.ok) throw new Error("Respuesta no válida del servidor");
       return res.json();
@@ -109,7 +112,7 @@ function cambiarContraseña(event) {
     nuevaContraseña: document.getElementById('nuevaContraseña').value,
   };
 
-  fetch('http://localhost:3000/api/cambiar-contrasena', {
+  fetch(`${API_URL}/api/cambiar-contrasena`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(datos)

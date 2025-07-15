@@ -53,6 +53,8 @@
 
     <!-- Script para el registro -->
     <script>
+      const API_URL = 'https://proyecto-final-production-9ab6.up.railway.app';
+
       function registrar(event) {
         event.preventDefault();
 
@@ -68,7 +70,7 @@
           return;
         }
 
-        fetch("http://localhost:3000/api/registro", {
+        fetch(`${API_URL}/api/registro`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

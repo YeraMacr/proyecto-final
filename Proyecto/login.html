@@ -71,6 +71,8 @@
   </div>
 
   <script>
+    const API_URL = 'https://proyecto-final-production-9ab6.up.railway.app';
+
     function login(event) {
       event.preventDefault();
       const user = document.getElementById("username").value;
@@ -81,7 +83,7 @@
         return;
       }
 
-      fetch("http://localhost:3000/api/login", {
+      fetch(`${API_URL}/api/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
