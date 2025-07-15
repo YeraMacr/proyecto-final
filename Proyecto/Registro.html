@@ -1,63 +1,99 @@
 <!DOCTYPE html>
 <html lang="es">
   <head>
-    <meta charset="UTF-8">
-    <title>REGISTRATE</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8" />
+    <title>Registro de Usuario - AvocAPP</title>
+    <link rel="stylesheet" href="registro.css" />
   </head>
-<body>
-  <div class="registro-container">
-    <h2>REGISTRO</h2>
-    <form onsubmit="return registrar(event)">
-      <input type="text" id="username" placeholder="Usuario" required>
-      <input type="text" id="telefono" placeholder="Teléfono" required>
-      <input type="password" id="contraseña" placeholder="Contraseña" required>
-      <input type="password" id="confirmar-contraseña" placeholder="Confirmar Contraseña" required>
-      <button type="submit">Registrar</button>
-    </form>
-    <a href="login.html">¿Ya tienes cuenta? Inicia sesión</a>
-    <div class="error-message" id="error-message"></div>
-  </div>
-  
-  <script>
-    function registrar(event) {
-      event.preventDefault();
-      
-      const nombre = document.getElementById("username").value;
-      const telefono = document.getElementById("telefono").value;
-      const contraseña = document.getElementById("contraseña").value;
-      const confirmarContraseña = document.getElementById("confirmar-contraseña").value;
+  <body>
+    <div class="registro-wrapper">
+      <div class="registro-card">
+        <!-- Logo -->
+        <div class="logo">
+          <img src="/assets/logo.png" alt="Logo AvocAPP" class="logo-img" />
+        </div>
 
-      if (contraseña !== confirmarContraseña) {
-        document.getElementById("error-message").innerText = "Las contraseñas no coinciden.";
-        return;
-      }
+        <!-- Título -->
+        <h2 class="registro-title">Registro de Usuario</h2>
 
-      // Hacer la solicitud al servidor para registrar el usuario
-      fetch("http://localhost:3000/api/registro", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          nombre: nombre,
-          telefono: telefono,
-          contraseña: contraseña
-        })
-      })
-      .then(respuesta => respuesta.json())
-      .then(data => {
-        if (data.success) {
-          window.location.href = "login.html"; // Redirigir a login después del registro exitoso
-        } else {
-          document.getElementById("error-message").innerText = data.message || "Error al registrar el usuario.";
+        <!-- Formulario -->
+        <form class="registro-form" onsubmit="return registrar(event)">
+          <div class="form-group">
+            <label for="username">Usuario</label>
+            <input type="text" id="username" placeholder="Nombre de usuario" required />
+          </div>
+
+          <div class="form-group">
+            <label for="telefono">Teléfono</label>
+            <input type="text" id="telefono" placeholder="Ingrese su número de teléfono" required />
+          </div>
+
+          <div class="form-group">
+            <label for="contraseña">Contraseña</label>
+            <input type="password" id="contraseña" placeholder="Contraseña" required />
+          </div>
+
+          <div class="form-group">
+            <label for="confirmar-contraseña">Confirmar Contraseña</label>
+            <input type="password" id="confirmar-contraseña" placeholder="Confirme su contraseña" required />
+          </div>
+
+          <button type="submit" class="btn-login">Registrarse</button>
+        </form>
+
+        <!-- Link de regreso -->
+        <div class="links-container register-link">
+          <a href="login.html">← Volver al Login</a>
+        </div>
+
+        <!-- Mensaje de error -->
+        <div class="error-message" id="error-message"></div>
+      </div>
+    </div>
+
+    <!-- Script para el registro -->
+    <script>
+      function registrar(event) {
+        event.preventDefault();
+
+        const nombre = document.getElementById("username").value;
+        const telefono = document.getElementById("telefono").value;
+        const contraseña = document.getElementById("contraseña").value;
+        const confirmarContraseña = document.getElementById("confirmar-contraseña").value;
+        const errorDiv = document.getElementById("error-message");
+
+        if (contraseña !== confirmarContraseña) {
+          errorDiv.innerText = "Las contraseñas no coinciden.";
+          errorDiv.style.display = "block";
+          return;
         }
-      })
-      .catch(error => {
-        console.error("Error en la solicitud:", error);
-        document.getElementById("error-message").innerText = "Hubo un error al registrar el usuario.";
-      });
-    }
-  </script>
-</body>
+
+        fetch("http://localhost:3000/api/registro", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            nombre: nombre,
+            telefono: telefono,
+            contraseña: contraseña,
+          }),
+        })
+          .then((respuesta) => respuesta.json())
+          .then((data) => {
+            if (data.success) {
+              window.location.href = "login.html";
+            } else {
+              errorDiv.innerText = data.message || "Error al registrar el usuario.";
+              errorDiv.style.display = "block";
+            }
+          })
+          .catch((error) => {
+            console.error("Error en la solicitud:", error);
+            errorDiv.innerText = "Hubo un error al registrar el usuario.";
+            errorDiv.style.display = "block";
+          });
+      }
+    </script>
+  </body>
 </html>

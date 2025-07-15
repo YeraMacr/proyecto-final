@@ -164,7 +164,7 @@ app.get('/api/reporte', (req, res) => {
 });
 
 // Cambiar contraseña
-app.post('/api/cambiar-contraseña', (req, res) => {
+app.post('/api/cambiar-contrasena', (req, res) => {
   const { nombre, contraseñaActual, nuevaContraseña } = req.body;
 
   if (!nombre || !contraseñaActual || !nuevaContraseña) {
@@ -201,6 +201,8 @@ app.get('/', (req, res) => {
 });
 
 // Iniciar servidor
+const PORT = process.env.PORT || 3000;
+
 app.listen(3000, () => {
-  console.log('Servidor corriendo en http://localhost:3000');
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
